@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+  toad_api:
+    build:
+      context: https://github.com/morelab/toad_api.git
+    links:
+      - "mqtt"
+    depends_on:
+      - mqtt
+    expose:
+      - "80"
+    ports:
+      - "80:80"
+    volumes:
+      - type: bind
+        source: ./config/toad_api
+        target: /app/config
+  toad_influx_query:
+    build:
+      context: https://github.com/morelab/toad_influx_query.git
+    volumes:
+      - type: bind
+        source: ./config/toad_influx_query
+        target: /app/config
+    links:
+      - "mqtt"
+      - "influxdb"
+    depends_on:
+      - mqtt
+      - influxdb
+  toad_influx_data:
+    build:
+      context: https://github.com/morelab/toad_influx_data.git
+    volumes:
+      - type: bind
+        source: ./config/toad_influx_data
+        target: /app/config
+    links:
+      - "mqtt"
+      - "influxdb"
+    depends_on:
+      - mqtt
+      - influxdb
+  toad_sp_command:
+    build:
+      context: https://github.com/morelab/toad_sp_command.git
+    volumes:
+      - type: bind
+        source: ./config/toad_sp_command
+        target: /app/config
+    links:
+      - "mqtt"
+      - "etcd"
+    depends_on:
+      - mqtt
+      - etcd
+  toad_sp_data:
+    build:
+      context: https://github.com/morelab/toad_sp_data.git
+    volumes:
+      - type: bind
+        source: ./config/toad_sp_data
+        target: /app/config
+    links:
+      - "mqtt"
+      - "etcd"
+    depends_on:
+      - mqtt
+      - etcd
+
+# Other services
+  mqtt:
+      image: eclipse-mosquitto
+      hostname: mqtt
+      container_name: mqtt
+      volumes:
+      - /mosquitto/data
+      - /mosquitto/log
+      expose:
+        - "1883"
+        - "9001"
+      ports:
+        - "1883:1883"
+        - "9001:9001"
+  influxdb:
+    image: influxdb
+    hostname: influxdb
+    container_name: influxdb
+    volumes:
+    - influxdb:/var/lib/influxdb
+    expose:
+      - "8086"
+    ports:
+      - "8086:8086"
+  etcd:
+    image: quay.io/coreos/etcd
+    hostname: etcd
+    container_name: etcd
+    volumes:
+      - etcd:/etcd_data
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    command:
+      - /usr/local/bin/etcd
+      - -name
+      - etcd
+      - --data-dir
+      - /etcd_data
+      - -advertise-client-urls
+      - http://etcd:2379
+      - -listen-client-urls
+      - http://0.0.0.0:2379
+      - -initial-advertise-peer-urls
+      - http://etcd:2380
+      - -listen-peer-urls
+      - http://0.0.0.0:2380
+      - -initial-cluster
+      - etcd=http://etcd:2380
+
+volumes:
+  influxdb:
+  etcd:
