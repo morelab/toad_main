@@ -92,6 +92,8 @@ services:
     image: influxdb
     hostname: influxdb
     container_name: influxdb
+    environment:
+      INFLUXDB_DB: sp
     volumes:
       - influxdb:/var/lib/influxdb
     expose:
