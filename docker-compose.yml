@@ -7,12 +7,12 @@ services:
     container_name: toad_api
     expose:
       - "80"
-      ports:
-        - "80:80"
-      volumes:
-        - type: bind
-          source: ./config/toad_api
-          target: /app/config
+    ports:
+      - "80:80"
+    volumes:
+      - type: bind
+        source: ./config/toad_api
+        target: /app/config
     links:
       - "mqtt"
     depends_on:
