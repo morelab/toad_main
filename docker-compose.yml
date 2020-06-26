@@ -6,7 +6,7 @@ services:
       context: https://github.com/morelab/toad_api.git
     container_name: toad_api
     environment:
-      PORT: 8080
+      PORT: 8080  # if not specified, 8080 by default
     expose:
       - "8080"
     ports:
