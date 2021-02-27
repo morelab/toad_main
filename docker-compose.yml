@@ -81,6 +81,8 @@ services:
     image: eclipse-mosquitto:1.6
     hostname: mqtt
     container_name: mqtt
+    depends_on:
+      - influxdb
     volumes:
       - /mosquitto/data
       - /mosquitto/log
@@ -106,6 +108,8 @@ services:
     image: quay.io/coreos/etcd
     hostname: etcd
     container_name: etcd
+    depends_on:
+      - influxdb
     volumes:
       - etcd:/etcd_data
     ports:
