@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   toad_api:
@@ -6,7 +6,7 @@ services:
       context: https://github.com/morelab/toad_api.git
     container_name: toad_api
     environment:
-      PORT: 8080  # if not specified, 8080 by default
+      PORT: 8080 # if not specified, 8080 by default
     expose:
       - "8080"
     ports:
@@ -19,6 +19,9 @@ services:
       - "mqtt"
     depends_on:
       - mqtt
+    logging:
+      options:
+        max-size: "200m"
   toad_influx_query:
     build:
       context: https://github.com/morelab/toad_influx_query.git
@@ -33,6 +36,9 @@ services:
     depends_on:
       - mqtt
       - influxdb
+    logging:
+      options:
+        max-size: "200m"
   toad_influx_data:
     build:
       context: https://github.com/morelab/toad_influx_data.git
@@ -61,6 +67,9 @@ services:
     depends_on:
       - mqtt
       - etcd
+    logging:
+      options:
+        max-size: "200m"
   toad_sp_data:
     build:
       context: https://github.com/morelab/toad_sp_data.git
@@ -75,7 +84,9 @@ services:
     depends_on:
       - mqtt
       - etcd
-
+    logging:
+      options:
+        max-size: "200m"
   # Other services
   mqtt:
     image: eclipse-mosquitto:1.6
